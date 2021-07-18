@@ -1,7 +1,8 @@
 const crypto = require("crypto");
+const config = require("../config/app.config");
 
-const PASSWORD_SALT = "auth-security";
-const PASSWORD_STRECH = 3;
+const PASSWORD_SALT = config.hash.salt;
+const PASSWORD_STRECH = config.hash.strech;
 
 const digest = function (text) {
   let hash;

@@ -1,7 +1,7 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const hash = require("./hash.js").digest;
-const connection = require('../db/mysqlconfig.js');
+const users = require('../model/users');
 
 
 passport.serializeUser((user, done) => {
@@ -17,27 +17,31 @@ passport.use("local-strategy", new LocalStrategy({
     passwordField: "password",
     passReqToCallback: true
 }, (req, username, password, done) => {
-    connection.query('select * from users where id = "' + username + '"', function (error, results, fields) {
-        if (error) {
-            done(error);
+
+    async function main() {
+        const retObj = await users.findPKey(username)
+        if (!retObj) {
+            done(null, false, req.flash("message", "ユーザー名　または　パスワード　が間違っています。"));
         } else {
-            if (results.length === 0) {
+            if (retObj.length === 0) {
                 done(null, false, req.flash("message", "ユーザー名　または　パスワード　が間違っています。"));
             } else {
-                if (results[0].password === hash(password)) {
+                if (retObj[0].password === hash(password)) {
                     req.session.regenerate((err) => {
                         if (err) {
                             done(err);
                         } else {
-                            done(null, results[0].id);
+                            done(null, retObj[0]);
                         }
                     });
                 } else {
                     done(null, false, req.flash("message", "ユーザー名　または　パスワード　が間違っています。"));
                 }
             }
-        };
-    });
+        }
+    }
+    main();
+
 }));
 
 const initialize = function () {
