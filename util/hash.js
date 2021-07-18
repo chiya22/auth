@@ -1,8 +1,10 @@
 const crypto = require("crypto");
-const config = require("../config/app.config");
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
-const PASSWORD_SALT = config.hash.salt;
-const PASSWORD_STRECH = config.hash.strech;
+const PASSWORD_SALT = process.env.HASH_SALT;
+const PASSWORD_STRECH = process.env.HASH_STRECH;
 
 const digest = function (text) {
   let hash;

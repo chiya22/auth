@@ -6,6 +6,10 @@ const logger = require('morgan');
 const security = require('./util/security');
 const flash = require("connect-flash");
 
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
@@ -18,7 +22,7 @@ app.set('view engine', 'ejs');
 //セッションの有効化
 const session = require('express-session');
 app.use(session({
-  secret: "auth-secret",
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true,
   name: "sid",
