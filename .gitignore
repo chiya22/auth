@@ -1,3 +1,5 @@
 node_modules
 .env
-logs/crud.log*
+logs/*
+.vscode/launch.json
+logs/crud.log
